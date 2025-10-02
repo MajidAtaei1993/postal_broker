@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\receiver;
+use App\Models\Receiver;
 use App\Http\Requests\StorereceiverRequest;
 use App\Http\Requests\UpdatereceiverRequest;
+use App\Http\Resources\ReceiverResource;
 
 class ReceiverController extends Controller
 {
@@ -13,7 +14,30 @@ class ReceiverController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $receivers = Receiver::orderBy('created_at', 'desc')->paginate(10);
+            return response()->json([
+                'data' => ReceiverResource::collection($receivers),
+                'meta' => [
+                    'current_page' => $receivers->currentPage(),
+                    'first_page_url' => $receivers->url(1),
+                    'from' => $receivers->firstItem(),
+                    'last_page' => $receivers->lastPage(),
+                    'last_page_url' => $receivers->url($receivers->lastPage()),
+                    'links' => $receivers->toArray()['links'],
+                    'next_page_url' => $receivers->nextPageUrl(),
+                    'prev_page_url' => $receivers->previousPageUrl(),
+                    'path' => $receivers->path(),
+                    'per_page' => $receivers->perPage(),
+                    'to' => $receivers->lastItem(),
+                    'total' => $receivers->total()
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ]);
+        }
     }
 
     /**

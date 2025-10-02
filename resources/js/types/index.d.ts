@@ -37,3 +37,26 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+
+export interface ShipmentJson {
+    sender_id: number,
+    receiver_id: number,
+    status: string,
+    service_type: string,
+    package_ids: string[]
+}
+
+export interface SendersReceiverJson {
+    data: string[]
+    meta: {}
+}
+
+export interface PackagesJson {
+    weight: number;
+    length: number;
+    width: number;
+    height: number;
+    package_type: string;
+    contents: string;
+}
