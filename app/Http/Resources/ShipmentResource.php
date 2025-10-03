@@ -10,6 +10,7 @@ class ShipmentResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
+     * @param Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -18,10 +19,11 @@ class ShipmentResource extends JsonResource
             'id' => $this->id,
             'sender' => new UserResource($this->whenLoaded('sender')),
             'receiver' => new UserResource($this->whenLoaded('receiver')),
-            'packages'      => PackageResource::collection($this->whenLoaded('packages')),
             'tracking_code' => $this->tracking_code,
-            'service_type' => $this->service_type,
-            'status' => $this->status
+            'service_type'  => $this->service_type,
+            'status'        => $this->status,
+            'packages'      => $this->packages,
+            'description'   => $this->description,
         ];
     }
 }

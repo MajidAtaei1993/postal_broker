@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="state.dialog" @after-leave="state.shipment = {}" persistent>
+    <v-dialog v-model="state.dialog" @after-leave="leaveDialog" persistent>
         <!-- this slot use for btn insted of dialog -->
         <template #activator>
             <v-btn @click="state.dialog = true" append-icon="mdi-plus" color="primary">add new</v-btn>
@@ -33,7 +33,7 @@
                         <v-select label="Service Type" v-model="state.shipment.service_type" :items="state.serviceTypes" item-title="full_name" item-value="id" variant="outlined" hide-details></v-select>
                     </v-col>
                     <v-col cols="12" class="pa-2">
-                        <v-select label="Packages"  v-model="state.shipment.packages" multiple :items="packagesStore.packages" item-title="package_type" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Packages"  v-model="state.shipment.packages" multiple :items="state.packageTypes" item-title="package_type" item-value="id" variant="outlined" hide-details>
                             <template #append>
                                 <v-btn icon="mdi-plus" color="primary" rounded></v-btn>
                             </template>
@@ -65,6 +65,7 @@ const state = reactive({
    shipment: {
         sender: null,
         receiver: null,
+        package_type: null,
         packages: [],
         status: '',
         service_type: '',
@@ -80,13 +81,32 @@ const state = reactive({
        'express',
        'priority',
        'international'
-   ]
+   ],
+   packageTypes:[
+        'document',
+        'parcel',
+        'fragile',
+        'perishable',
+        'valuable'
+    ]
 })
 
+// methods
 const saveAll = () =>{
     
 }
+const leaveDialog = () => {
+    const shipment = state.shipment
 
+    shipment.sender = null,
+    shipment.receiver = null
+    shipment.packages = [],
+    shipment.status = '',
+    shipment.service_type = '',
+    shipment.desciption = ''
+}
+
+// watchs
 watch(
     () => state.dialog,
     async (n, o) => {
@@ -96,6 +116,7 @@ watch(
     }
 )
 
+// computeds
 const checkInputs = computed(() => {
     const shipment = state.shipment
 

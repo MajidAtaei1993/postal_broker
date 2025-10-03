@@ -14,6 +14,17 @@ class StoreuserRequest extends FormRequest
         return true;
     }
 
+    // form validator
+    public function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(
+            response()->json([
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ], 422)
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

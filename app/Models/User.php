@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -60,22 +59,5 @@ class User extends Authenticatable
     public function receiverShipments(): HasMany
     {
         return $this->hasMany(Shipment::class, 'receiver_id');
-    }
-
-    /**
-     * All packages sent by this user through shipments
-     *
-     * @return HasManyThrough
-     */
-    public function packages(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            Package::class, // Final model
-            Shipment::class, // Intermediate model
-            'sender_id', // FK on shipments table referencing user
-            'shipment_id', // FK on packages table referencing shipment
-            'id', // Local key on users table
-            'id' // Local key on shipments table
-        );
     }
 }

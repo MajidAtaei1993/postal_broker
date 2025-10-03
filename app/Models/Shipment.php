@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shipment extends Model
 {
@@ -13,7 +12,13 @@ class Shipment extends Model
         'receiver_id',
         'tracking_code',
         'service_type',
-        'status'
+        'status',
+        'packages',
+        'description'
+    ];
+
+    protected $casts = [
+        'packages' => 'array',
     ];
 
     // Status constants
@@ -26,6 +31,12 @@ class Shipment extends Model
         self::STATUS_SHIPPED,
         self::STATUS_DELIVERED,
     ];
+
+    //  helper methods to check status
+    public function isValidStatus(string $type): bool
+    {
+        return in_array($type, self::STATUSES);
+    }
 
     // Service type constants
     public const SERVICE_STANDARD      = 'standard';
@@ -40,43 +51,32 @@ class Shipment extends Model
         self::SERVICE_INTERNATIONAL,
     ];
 
-    //  helper methods to check status
-    public function isPending(): bool
-    {
-        return $this->status === self::STATUS_PENDING;
-    }
-
-    public function isShipped(): bool
-    {
-        return $this->status === self::STATUS_SHIPPED;
-    }
-
-    public function isDelivered(): bool
-    {
-        return $this->status === self::STATUS_DELIVERED;
-    }
-
     // Helper methods for service types
-    public function isStandard(): bool
+    public function isValidServiceType(string $type): bool
     {
-        return $this->service_type === self::SERVICE_STANDARD;
-    }
-    
-    public function isExpress(): bool
-    {
-        return $this->service_type === self::SERVICE_EXPRESS;
+        return in_array($type, self::SERVICE_TYPES);
     }
 
-    public function isPriority(): bool
-    {
-        return $this->service_type === self::SERVICE_PRIORITY;
-    }
+    // Package type constant
+    public const PACKAGE_DOCUMENT = 'document';
+    public const PACKAGE_PARCEL = 'parcel';
+    public const PACKAGE_FRAGILE = 'fragile';
+    public const PACKAGE_PERISHABLE = 'perishable';
+    public const PACKAGE_VALUABLE = 'valuable';
 
-    public function isInternational(): bool
-    {
-        return $this->service_type === self::SERVICE_INTERNATIONAL;
-    }
+    // list of all types for validation
+    public const PACKAGE_TYPES = [
+        self::PACKAGE_DOCUMENT,
+        self::PACKAGE_PARCEL,
+        self::PACKAGE_FRAGILE,
+        self::PACKAGE_PERISHABLE,
+        self::PACKAGE_VALUABLE,
+    ];
 
+    public static function isValidPackageType(string $type): bool
+    {
+        return in_array($type, self::PACKAGE_TYPES);
+    }
 
     // this command run before data store in data base 
     // create random unique 24 length number for tracking_code
@@ -101,6 +101,7 @@ class Shipment extends Model
         return $tracking_code;
     }
 
+    // Releations
     // each shipment have 1 sender and receiver
     public function sender(): BelongsTo
     {
@@ -109,11 +110,5 @@ class Shipment extends Model
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_id');
-    }
-
-    // shipment packages
-    public function packages(): HasMany
-    {
-        return $this->hasMany(Package::class);
     }
 }

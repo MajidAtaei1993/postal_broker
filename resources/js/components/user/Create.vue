@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="state.dialog" @after-leave="state.user = {}" persistent>
+    <v-dialog v-model="state.dialog" @after-leave="leaveDialog" persistent>
         <!-- this slot use for btn insted of dialog -->
         <template #activator>
             <v-tooltip text="Tooltip">
@@ -58,11 +58,20 @@ const state = reactive({
    }
 })
 
+// methods
 const saveAll = () =>{
     
 }
+const leaveDialog = () => {
+    const user = state.user
 
+    user.full_name = '',
+    user.mobile = '',
+    user.zip_code = '',
+    user.address = ''
+}
 
+// computeds
 const checkInputs = computed(() => {
     const user = state.user
 

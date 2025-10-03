@@ -18,7 +18,10 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'receiver_id');
             $table->string('tracking_code', 24)->unique();
             $table->enum('service_type', ['standard', 'express', 'priority', 'international'])->default('standard');
+            $table->enum('package_type', ['document','parcel','fragile','perishable','valuable'])->default('document');
+            $table->json('packages');
             $table->enum('status', ['pending', 'shipped', 'delivered'])->default('pending');
+            $table->text('description');
             $table->timestamps();
         });
     }

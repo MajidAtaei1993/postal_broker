@@ -6,8 +6,7 @@ use App\Models\Shipment;
 use App\Http\Requests\StoreshipmentRequest;
 use App\Http\Requests\UpdateshipmentRequest;
 use App\Http\Resources\ShipmentResource;
-use App\Models\Package;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ShipmentController extends Controller
 {
@@ -48,25 +47,21 @@ class ShipmentController extends Controller
      */
     public function store(StoreshipmentRequest $request)
     {
-        DB::beginTransaction(); // use this when we need to change more than 1 table in DB for sure proccess will be succed
         try {
             // create shipment
             $shipment = Shipment::create([
-                'sender_id'    => $request->sender_id,
-                'receiver_id'  => $request->receiver_id,
+                'sender_id' => $request->sender_id,
+                'receiver_id' => $request->receiver_id,
                 'tracking_code'=> Shipment::generateNumericTrackingCode(),
                 'service_type' => $request->service_type,
-                'status'       => $request->status,
+                'status' => $request->status,
+                'packages' => $request->packages,
+                'description' => $request->description
             ]);
-
-            // attach packages
-            Package::whereIn('id', $request->package_ids)->update(['shipment_id' => $shipment->id]);
-
-            DB::commit();
 
             return response()->json([ 
                 'message' => 'Shipment created successfully',
-                'data'    => new ShipmentResource($shipment->load('sender', 'receiver', 'packages'))
+                'data'    => new ShipmentResource($shipment->load('sender', 'receiver'))
             ], 201);
 
         } catch (\Throwable $th) {
@@ -76,6 +71,7 @@ class ShipmentController extends Controller
             ], 500);
         }
     }
+
 
 
     /**
