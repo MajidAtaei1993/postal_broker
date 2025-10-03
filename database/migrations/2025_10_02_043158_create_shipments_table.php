@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Package;
-use App\Models\Receiver;
-use App\Models\Sender;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Sender::class);
-            $table->foreignIdFor(Receiver::class);
+            $table->foreignIdFor(User::class, 'sender_id');
+            $table->foreignIdFor(User::class, 'receiver_id');
             $table->string('tracking_code', 24)->unique();
             $table->enum('service_type', ['standard', 'express', 'priority', 'international'])->default('standard');
             $table->enum('status', ['pending', 'shipped', 'delivered'])->default('pending');

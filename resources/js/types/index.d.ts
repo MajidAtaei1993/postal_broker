@@ -2,7 +2,7 @@ import { InertiaLinkProps } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
-    user: User;
+    user: User[];
 }
 
 export interface BreadcrumbItem {
@@ -26,16 +26,6 @@ export type AppPageProps<
     sidebarOpen: boolean;
 };
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
 export type BreadcrumbItemType = BreadcrumbItem;
 
 
@@ -47,9 +37,17 @@ export interface ShipmentJson {
     package_ids: string[]
 }
 
-export interface SendersReceiverJson {
-    data: string[]
-    meta: {}
+export interface User {
+    id: string;
+    full_name: string;
+    mobile: string;
+    address: string;
+    zip_code: string;
+}
+
+export interface UsersJson {
+    data: User[];
+    meta: {};
 }
 
 export interface PackagesJson {

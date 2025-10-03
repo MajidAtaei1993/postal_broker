@@ -16,11 +16,11 @@
             <v-card-text>
                 <v-row class="ma-0">
                     <v-col cols="12" md="5" class="pa-2">
-                        <v-select label="Sender" v-model="state.shipment.sender" :items="senderStore.senders" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Sender" v-model="state.shipment.sender" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
                         </v-select>
                     </v-col>
                     <v-col cols="12" md="7" class="pa-2">
-                        <v-select label="Receiver" v-model="state.shipment.receiver" :items="receiverStore.receivers" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Receiver" v-model="state.shipment.receiver" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
                             <template #append>
                                 <CreateUser />
                             </template>
@@ -55,11 +55,9 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import CreateUser from '@/components/user/Create.vue'
 
-import { useSendersStore } from '@/store/senders'
-import { useReceiversStore } from '@/store/receivers'
+import { useUserStore } from '@/store/users'
 import { usePackagesStore } from '@/store/packages'
-const senderStore = useSendersStore()
-const receiverStore= useReceiversStore()
+const useStore = useUserStore()
 const packagesStore = usePackagesStore()
 
 const state = reactive({
@@ -93,8 +91,7 @@ watch(
     () => state.dialog,
     async (n, o) => {
         if(n === true)
-        await senderStore.allSenders()
-        await receiverStore.allReceivers()
+        await useStore.allUsers()
         await packagesStore.allPackages()
     }
 )

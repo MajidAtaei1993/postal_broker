@@ -104,13 +104,14 @@ class Shipment extends Model
     // each shipment have 1 sender and receiver
     public function sender(): BelongsTo
     {
-        return $this->belongsTo(Sender::class);
+        return $this->belongsTo(User::class, 'sender_id');
     }
     public function receiver(): BelongsTo
     {
-        return $this->belongsTo(Receiver::class);
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 
+    // shipment packages
     public function packages(): HasMany
     {
         return $this->hasMany(Package::class);

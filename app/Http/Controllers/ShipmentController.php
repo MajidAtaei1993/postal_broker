@@ -7,6 +7,7 @@ use App\Http\Requests\StoreshipmentRequest;
 use App\Http\Requests\UpdateshipmentRequest;
 use App\Http\Resources\ShipmentResource;
 use App\Models\Package;
+use Illuminate\Support\Facades\DB;
 
 class ShipmentController extends Controller
 {
@@ -47,6 +48,7 @@ class ShipmentController extends Controller
      */
     public function store(StoreshipmentRequest $request)
     {
+        DB::beginTransaction(); // use this when we need to change more than 1 table in DB for sure proccess will be succed
         try {
             // create shipment
             $shipment = Shipment::create([
@@ -58,8 +60,9 @@ class ShipmentController extends Controller
             ]);
 
             // attach packages
-            Package::whereIn('id', $request->package_ids)
-                ->update(['shipment_id' => $shipment->id]);
+            Package::whereIn('id', $request->package_ids)->update(['shipment_id' => $shipment->id]);
+
+            DB::commit();
 
             return response()->json([ 
                 'message' => 'Shipment created successfully',

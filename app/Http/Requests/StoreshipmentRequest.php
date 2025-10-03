@@ -5,9 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Shipment;
-use App\Models\Sender;
-use App\Models\Receiver;
 use App\Models\Package;
+use App\Models\User;
 
 class StoreshipmentRequest extends FormRequest
 {
@@ -25,8 +24,8 @@ class StoreshipmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sender_id'   => ['required', 'integer', Rule::exists(Sender::class, 'id')],
-            'receiver_id' => ['required', 'integer', Rule::exists(Receiver::class, 'id')],
+            'sender_id'   => ['required', 'integer', Rule::exists(User::class, 'id')],
+            'receiver_id' => ['required', 'integer', Rule::exists(User::class, 'id')],
             
             // packages must be array of integers
             'package_ids'   => ['required', 'array'],
