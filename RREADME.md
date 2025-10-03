@@ -1,4 +1,4 @@
-# Project Name
+# Postal Broker
 
 A full-stack application built with **Laravel** for the backend and **Vue.js + Inertia.js** for the frontend.
 
@@ -16,7 +16,7 @@ A full-stack application built with **Laravel** for the backend and **Vue.js + I
 ---
 
 ## Introduction
-This project is a full-stack system for managing [your project domain, e.g., shipping parcels].  
+This project is a full-stack system for managing shipping packages.  
 Laravel is used as the backend framework, while Vue.js with Inertia.js provides a SPA-like frontend experience.
 
 ## Features
@@ -38,8 +38,8 @@ Laravel is used as the backend framework, while Vue.js with Inertia.js provides 
 ### Backend
 ```bash
 # Clone the repository
-git clone <REPO_URL>
-cd <project-folder>
+git clone https://github.com/MajidAtaei1993/postal_broker.git
+cd postal_borker
 
 # Install dependencies
 composer install
