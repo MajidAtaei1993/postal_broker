@@ -29,32 +29,29 @@ export type AppPageProps<
 export type BreadcrumbItemType = BreadcrumbItem;
 
 
+export interface Package {
+    weight: string
+    length: string
+    width: string
+    height: string
+    package_type: string
+}
 export interface ShipmentJson {
-    sender_id: number,
-    receiver_id: number,
-    status: string,
-    service_type: string,
-    package_ids: string[]
+    sender_id: string
+    receiver_id: string
+    status: string
+    packages: Package[]
+    description: string
 }
 
 export interface User {
-    id: string;
-    full_name: string;
-    mobile: string;
-    address: string;
-    zip_code: string;
+    id: string
+    full_name: string
+    mobile: string
+    address: string
+    zip_code: string
 }
-
 export interface UsersJson {
-    data: User[];
-    meta: {};
-}
-
-export interface PackagesJson {
-    weight: number;
-    length: number;
-    width: number;
-    height: number;
-    package_type: string;
-    contents: string;
+    data: User[]
+    meta: {}
 }

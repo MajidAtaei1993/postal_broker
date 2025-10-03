@@ -16,7 +16,8 @@ class ShipmentController extends Controller
     public function index()
     {
         try {
-            $shipments = Shipment::orderBy('created_at', 'desc')->paginate(10);
+            // load reletions
+            $shipments = Shipment::with(['sender', 'receiver'])->orderBy('created_at', 'desc')->paginate(10);
 
             return response()->json([
                 'data' => ShipmentResource::collection($shipments),

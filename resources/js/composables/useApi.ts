@@ -25,13 +25,16 @@ export async function useApi<T = any>( endpoint: string, { method = 'GET', body 
         }
 
         const result = await response.json()
-        
+        if (result.message) {
+            alert(result.message)
+        }
         if (result.data !== undefined) {
             return { data: result.data, meta: result.meta }
         }
         
         return { data: result }
-    } catch (error) {
+    } catch (error: any) {
+        alert(error.message || "Unexpected error")
         return { error }
     }
 }

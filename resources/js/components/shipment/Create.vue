@@ -15,95 +15,167 @@
             <!-- content -->
             <v-card-text>
                 <v-row class="ma-0">
+
+                    <!-- sender and receiver input -->
                     <v-col cols="12" md="5" class="pa-2">
-                        <v-select label="Sender" v-model="state.shipment.sender" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Sender" v-model="state.shipment.sender_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
                         </v-select>
                     </v-col>
                     <v-col cols="12" md="7" class="pa-2">
-                        <v-select label="Receiver" v-model="state.shipment.receiver" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Receiver" v-model="state.shipment.receiver_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
                             <template #append>
-                                <CreateUser />
+                                <!-- new use dialog -->
+                                <CreateUser /> 
                             </template>
                         </v-select>
                     </v-col>
+
+                    <!-- status and service_type -->
                     <v-col cols="12" md="6" class="pa-2">
-                        <v-select label="Status" v-model="state.shipment.status" :items="state.status" item-title="full_name" item-value="id" variant="outlined" hide-details></v-select>
+                        <v-select label="Status" v-model="state.shipment.status" :items="state.status" variant="outlined" hide-details></v-select>
                     </v-col>
                     <v-col cols="12" md="6" class="pa-2">
-                        <v-select label="Service Type" v-model="state.shipment.service_type" :items="state.serviceTypes" item-title="full_name" item-value="id" variant="outlined" hide-details></v-select>
+                        <v-select label="Service Type" v-model="state.shipment.service_type" :items="state.serviceTypes" variant="outlined" hide-details></v-select>
                     </v-col>
+
+                    <!-- package data -->
                     <v-col cols="12" class="pa-2">
-                        <v-select label="Packages"  v-model="state.shipment.packages" multiple :items="state.packageTypes" item-title="package_type" item-value="id" variant="outlined" hide-details>
+                        <v-select label="Packages"  v-model="state.package.package_type" return-object :items="state.packageTypes" item-title="package_type" item-value="id" variant="outlined" hide-details>
                             <template #append>
-                                <v-btn icon="mdi-plus" color="primary" rounded></v-btn>
+                                <v-btn icon="mdi-plus" color="primary" rounded @click="savePackage"></v-btn>
                             </template>
                         </v-select>
                     </v-col>
-                    <v-col cols="12">
-                        <v-textarea label="Decription" v-model="state.shipment.desciption" variant="outlined" hide-details></v-textarea>
+                    <v-col cols="12" md="3" class="pa-2">
+                        <v-text-field v-model="state.package.weight" hide-details variant="outlined" label="Weight" suffix="kg" />
+                    </v-col>
+                    <v-col cols="12" md="3" class="pa-2">
+                        <v-text-field v-model="state.package.length" hide-details variant="outlined" label="length" suffix="cm" />
+                    </v-col>
+                    <v-col cols="12" md="3" class="pa-2">
+                        <v-text-field v-model="state.package.width" hide-details variant="outlined" label="width" suffix="cm" />
+                    </v-col>
+                    <v-col cols="12" md="3" class="pa-2">
+                        <v-text-field v-model="state.package.height" hide-details variant="outlined" label="height" suffix="cm" />
+                    </v-col>
+
+                    <v-col cols="12" v-if="state.shipment.packages.length > 0" class="px-2 py-0">
+                        <v-list bg-color="transparent">
+                            <v-list-item v-for="(pkg, idx) in state.shipment.packages" :key="idx">
+                                <template #prepend>
+                                    <v-icon>mdi-numeric-{{ idx + 1 }}</v-icon>
+                                </template>
+                                <strong>{{ pkg.package_type }}</strong>: {{ pkg.weight }} kg - {{ pkg.length }}x{{ pkg.width }}x{{ pkg.height }} cm
+                            </v-list-item>
+                        </v-list>
+                    </v-col>
+
+                    <!-- description -->
+                    <v-col cols="12" class="pa-2">
+                        <v-textarea label="Decription" v-model="state.shipment.description" variant="outlined" hide-details></v-textarea>
                     </v-col>
                 </v-row>
             </v-card-text>
             <v-card-actions>
-                <v-btn block color="primary" @click="saveAll" :disabled="checkInputs">save all</v-btn>
+                <v-btn block color="primary" @click="saveAll" :disabled="checkInputs" :loading="state.saving">save all</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
-import CreateUser from '@/components/user/Create.vue'
+import { reactive, computed, watch } from 'vue'
+import { Package, ShipmentJson } from '@/types'
 
 import { useUserStore } from '@/store/users'
-import { usePackagesStore } from '@/store/packages'
 const useStore = useUserStore()
-const packagesStore = usePackagesStore()
+
+import { useShipmentStore } from '@/store/shipment'
+const shipmentStore = useShipmentStore()
+
+// componenets
+import CreateUser from '@/components/user/Create.vue'
 
 const state = reactive({
    dialog: false,
    shipment: {
-        sender: null,
-        receiver: null,
-        package_type: null,
-        packages: [],
+        sender_id: '',
+        receiver_id: '',
+        packages: [] as Package[],
         status: '',
         service_type: '',
-        desciption: ''
+        description: ''
    },
-   serviceTypes:[
-       'pending',
-       'shipped',
-       'delivered'
-   ],
-   status:[
-       'standard',
-       'express',
-       'priority',
-       'international'
-   ],
+    package:{
+        weight: '',
+        length: '',
+        width: '',
+        height: '',
+        package_type:''
+    },
+    serviceTypes:[
+        'standard',
+        'express',
+        'priority',
+        'international'
+    ],
+    status:[
+        'pending',
+        'shipped',
+        'delivered'
+    ],
    packageTypes:[
         'document',
         'parcel',
         'fragile',
         'perishable',
         'valuable'
-    ]
+    ],
+    saving: false
 })
 
 // methods
-const saveAll = () =>{
-    
+const saveAll = async () => {
+    const shipment = state.shipment
+    state.saving = true
+    try {
+        if (shipment.packages.length === 0) {
+            alert("Please add at least one package.")
+            return
+        }
+        await shipmentStore.addShipment(shipment)
+        leaveDialog()
+    } catch (error) {
+        return error
+    }
+    finally{
+        state.saving = false
+    }
 }
 const leaveDialog = () => {
     const shipment = state.shipment
 
-    shipment.sender = null,
-    shipment.receiver = null
+    shipment.sender_id = '',
+    shipment.receiver_id = '',
     shipment.packages = [],
     shipment.status = '',
     shipment.service_type = '',
-    shipment.desciption = ''
+    shipment.description = ''
+}
+const savePackage = () => {
+    const pkg = state.package
+    if (pkg.weight && pkg.height && pkg.length && pkg.width && pkg.package_type) {
+        state.shipment.packages.push(pkg)
+        state.package = { 
+            weight: '', 
+            length: '', 
+            width: '', 
+            height: '',
+            package_type: ''
+        }
+    } else {
+        alert('Please fill all package fields')
+    }
 }
 
 // watchs
@@ -112,7 +184,6 @@ watch(
     async (n, o) => {
         if(n === true)
         await useStore.allUsers()
-        await packagesStore.allPackages()
     }
 )
 
@@ -120,15 +191,15 @@ watch(
 const checkInputs = computed(() => {
     const shipment = state.shipment
 
-    if (!shipment.sender) return true
-    if (!shipment.receiver) return true
+    if (!shipment.sender_id) return true
+    if (!shipment.receiver_id) return true
 
     if (!shipment.packages || shipment.packages.length === 0) return true
 
     if (!shipment.status) return true
     if (!shipment.service_type) return true
 
-    if (!shipment.desciption || shipment.desciption.trim() === '') return true
+    if (!shipment.description || shipment.description.trim() === '') return true
 
     return false
 })

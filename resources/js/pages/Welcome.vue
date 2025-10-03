@@ -2,11 +2,33 @@
     <div class="Welcome">
         <v-toolbar title="Tracking Shipments" rounded>
             <v-toolbar-items>
+                <!-- add new shipment dialog -->
                 <NewShipment />
             </v-toolbar-items>
         </v-toolbar>
 
+        <!-- data-table for show all shipments -->
+        <DataTable :items="store.shipments" :headers="store.headers" :loading="store.loading" class="w-100">
+            <template v-slot:item.packages="{ item }">
+                <slot :item="item" :name="item" class="d-flex align-center">
+                    <ol>
+                        <li v-for="(pkg, idx) in item.packages" :key="idx">{{ pkg.package_type }}</li>
+                    </ol>
+                </slot>
+            </template>
 
+            <template v-slot:item.service_type="{ item }">
+                <v-chip :color="getServiceTypeColor(item.service_type)" variant="flat" size="small" class="text-capitalize">
+                    {{ item.service_type }}
+                </v-chip>
+            </template>
+
+            <template v-slot:item.status="{ item }">
+            <v-chip :color="getStatusColor(item.status)" variant="flat" size="small" class="text-capitalize">
+                {{ item.status }}
+            </v-chip>
+            </template>
+        </DataTable>
     </div>
 </template>
 
@@ -17,17 +39,41 @@ const store = useShipmentStore()
 
 // components
 import NewShipment from '@/components/shipment/Create.vue'
+import DataTable from '@/components/ui/tabel/DataTable.vue';
 
 const state = reactive({
-    tab: 0
+    tab: 0,
 })
+const getServiceTypeColor = (type: string) => {
+    switch (type) {
+        case 'standard':
+            return 'grey'
+        case 'express':
+            return 'blue'
+        case 'priority':
+            return 'orange'
+        case 'international':
+            return 'purple'
+        default:
+            return 'grey'
+    }
+}
 
+const getStatusColor = (status: string) => {
+    switch (status) {
+        case 'pending':
+            return 'grey'
+        case 'shipped':
+            return 'blue'
+        case 'delivered':
+            return 'green'
+        default:
+            return 'grey'
+  }
+}
 onMounted(async() =>{
     await store.loadShipments()
 })
-const storeShipment = function(){
-    
-}
 </script>
 
 <style lang="scss" scoped>
