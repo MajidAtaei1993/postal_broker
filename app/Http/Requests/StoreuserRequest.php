@@ -34,9 +34,9 @@ class StoreuserRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:100'],
-            'phone' => ['nullable', 'string', 'max:11'],
+            'mobile' => ['required', 'string', 'size:11', 'regex:/^09\d{9}$/'],
             'address' => ['required', 'string', 'max:255'],
-            'zip_code' => ['required', 'string', 'max:10'],
+            'zip_code' => ['required', 'string', 'max:10', 'unique:users,zip_code'],
         ];
     }
 
@@ -51,7 +51,8 @@ class StoreuserRequest extends FormRequest
             'full_name.max' => 'The receiver\'s name cannot exceed 100 characters.',
 
             'phone.string' => 'The phone number must be a string.',
-            'phone.max' => 'The phone number cannot exceed 11 characters.',
+            'phone.size' => 'The mobile number must be exactly 11 digits.',
+            'mobile.regex' => 'The mobile number format is invalid. It should start with 09 followed by 9 digits.',
 
             'address.required' => 'Please enter the receiver\'s address.',
             'address.string' => 'The address must be a string.',
@@ -59,7 +60,8 @@ class StoreuserRequest extends FormRequest
 
             'zip_code.required' => 'Please enter the receiver\'s postal code.',
             'zip_code.string' => 'The postal code must be a string.',
-            'zip_code.max' => 'The postal code cannot exceed 10 characters.'
+            'zip_code.max' => 'The postal code cannot exceed 10 characters.',
+            'zip_code.unique' => 'This postal code is already used by another user.'
         ];
     }
 

@@ -45,7 +45,7 @@ export interface ShipmentJson {
 }
 
 export interface User {
-    id: string
+    id??: string
     full_name: string
     mobile: string
     address: string

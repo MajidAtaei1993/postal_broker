@@ -38,7 +38,7 @@
                 </v-row>
             </v-card-text>
             <v-card-actions>
-                <v-btn block color="primary" @click="saveAll" :disabled="checkInputs">save all</v-btn>
+                <v-btn block color="primary" @click="saveAll" :disabled="checkInputs" :saving="state.saving">save all</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -47,20 +47,31 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 
+import { useUserStore } from '@/store/users'
+const userStore = useUserStore()
 
 const state = reactive({
-   dialog: false,
-   user: {
+    dialog: false,
+    user: {
         full_name:'',
         mobile:'',
         zip_code:'',
         address:''
-   }
+    },
+    saving: false
 })
 
 // methods
-const saveAll = () =>{
-    
+const saveAll = async () => {
+    state.saving = true
+    try {
+        await userStore.addUser(state.user)
+        leaveDialog()
+    } catch (error) {
+        return error
+    } finally {
+        state.saving = false
+    }
 }
 const leaveDialog = () => {
     const user = state.user

@@ -18,16 +18,16 @@
 
                     <!-- sender and receiver input -->
                     <v-col cols="12" md="5" class="pa-2">
-                        <v-select label="Sender" v-model="state.shipment.sender_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
-                        </v-select>
+                        <v-autocomplete label="Sender" v-model="state.shipment.sender_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        </v-autocomplete>
                     </v-col>
                     <v-col cols="12" md="7" class="pa-2">
-                        <v-select label="Receiver" v-model="state.shipment.receiver_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
+                        <v-autocomplete label="Receiver" v-model="state.shipment.receiver_id" :items="useStore.users" item-title="full_name" item-value="id" variant="outlined" hide-details>
                             <template #append>
                                 <!-- new use dialog -->
                                 <CreateUser /> 
                             </template>
-                        </v-select>
+                        </v-autocomplete>
                     </v-col>
 
                     <!-- status and service_type -->

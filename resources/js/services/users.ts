@@ -8,5 +8,13 @@ export const UsersService = {
             method: 'get'
         });
         return data ?? [];
+    },
+
+    async addUser(payload: User): Promise<User[]> {
+        const { data } = await useApi<User[]>('users', {
+            method: 'post',
+            body: payload
+        });
+        return data ?? [];
     }
 }

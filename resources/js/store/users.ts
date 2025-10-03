@@ -1,5 +1,5 @@
 import { UsersService } from "@/services/users";
-import { User } from "@/types";
+import { User, UsersJson } from "@/types";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore('users',{
@@ -15,6 +15,14 @@ export const useUserStore = defineStore('users',{
                 if (data) {
                     this.users = data;
                 }
+            } catch (error) {
+                return error
+            }
+        },
+
+        async addUser(payload: User){
+            try {
+                await UsersService.addUser(payload)
             } catch (error) {
                 return error
             }

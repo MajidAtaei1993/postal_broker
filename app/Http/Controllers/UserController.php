@@ -41,20 +41,32 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreuserRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+        try {
+            // create user
+            $user = User::create([
+                'full_name' => $request->full_name,
+                'mobile' => $request->mobile,
+                'address' => $request->address,
+                'zip_code' => $request->zip_code
+            ]);
+
+            return response()->json([
+                'message' => 'User created successfully',
+                'data'    => new UserResource($user) // or new UserResource($user)
+            ], 201);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'An error occurred while saving the user',
+                'error'   => $th->getMessage()
+            ], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.
