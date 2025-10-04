@@ -39,8 +39,9 @@ export const useShipmentStore = defineStore('shipment', {
         // Store a new shipment and add it to state
         async addShipment(payload: ShipmentJson) {
             try {
-                const { data } = await ShipmentService.storeShipment(payload);
-                if (data) this.shipments = data;
+               await ShipmentService.storeShipment(payload);
+
+               this.loadShipments()
             } catch (err: any) {
                 console.error('Error adding shipment:', err.message);
             }

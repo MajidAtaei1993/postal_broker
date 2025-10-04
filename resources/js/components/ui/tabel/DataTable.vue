@@ -2,7 +2,7 @@
     <div>
         <v-text-field v-model="state.search" placeholder="Search" variant="outlined" density="compact" hide-details class="my-3">
             <template v-slot:append>
-                <v-btn color="primary" height="100%" prepend-icon="mdi-magnify" class="text-capitalize" @click="searchItem" :loading="state.searching">Search</v-btn>
+                <v-btn color="primary" height="100%" prepend-icon="mdi-magnify" class="text-capitalize" :loading="state.searching">Search</v-btn>
             </template>
         </v-text-field>
         <v-data-table :search="state.search" :items="props.items" :headers="props.headers" fixed-header hide-default-footer density="comfortable" :loading="props.loading" class="w-100">

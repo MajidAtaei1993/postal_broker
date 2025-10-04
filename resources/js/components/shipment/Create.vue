@@ -145,6 +145,7 @@ const saveAll = async () => {
         }
         await shipmentStore.addShipment(shipment)
         leaveDialog()
+        
     } catch (error) {
         return error
     }
@@ -161,6 +162,8 @@ const leaveDialog = () => {
     shipment.status = '',
     shipment.service_type = '',
     shipment.description = ''
+
+    state.dialog = false
 }
 const savePackage = () => {
     const pkg = state.package
