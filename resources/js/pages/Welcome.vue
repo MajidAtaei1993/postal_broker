@@ -1,6 +1,8 @@
 <template>
     <div class="Welcome">
-        <v-toolbar title="Tracking Shipments" rounded>
+        <!-- <img src="../../../public/postal_borker.png" alt=""> -->
+        <img src="https://picsum.photos/1920/1080" alt="">
+        <v-toolbar title="Tracking Shipments" rounded color="surface">
             <v-toolbar-items>
                 <!-- add new shipment dialog -->
                 <NewShipment />
@@ -79,8 +81,18 @@ onMounted(async() =>{
 <style lang="scss" scoped>
 .Welcome {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     padding: 5% 15%;
+    img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+        opacity: .3;
+    }
 }
 </style>
